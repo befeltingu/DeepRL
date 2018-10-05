@@ -18,6 +18,7 @@ SL_LR = 0.005
 UPDATE_EVERY = 1  # how often to update the network
 SOFT_UPDATE_EVERY = 2
 
+
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
@@ -90,18 +91,18 @@ class PokerAgent():
 
         self.eps = max(self.eps_end, self.eps_decay * self.eps)
 
-    def action(self,state):
+    def action(self,state,possible_actions):
 
 
         if self.current_policy == 'epsilon-greedy':
 
-            return self.act_greedy(state,self.eps)
+            return self.act_greedy(state,possible_actions,self.eps)
 
         elif self.current_policy == 'policy':
 
-            return self.act_policy(state,self.eps)
+            return self.act_policy(state,possible_actions)
 
-    def act_policy(self,state,eps=0.):
+    def act_policy(self,state,possible_actions):
 
         state = self.convert_state(state)
 
@@ -112,12 +113,16 @@ class PokerAgent():
 
         self.policynetwork.train()
 
-        action_values[0][2] = -1000
-        action_values[0][3] = -1000
+        #action_values[0][2] = -1000
+        #action_values[0][3] = -1000
+
+        impossible_actions = [action for action in range(self.action_size) if action not in possible_actions]
+
+        action_values[0][impossible_actions] = -1000
 
         return np.argmax(action_values.cpu().data.numpy())
 
-    def act_greedy(self, state, eps=0.):
+    def act_greedy(self, state,possible_actions,eps=0.):
 
         """Returns actions for given state as per current policy.
 
@@ -134,8 +139,9 @@ class PokerAgent():
         with torch.no_grad():
             action_values = self.qnetwork_local(state)
 
-        action_values[0][2] = -1000
-        action_values[0][3] = -1000
+        impossible_actions = [action for action in range(self.action_size) if action not in possible_actions]
+
+        action_values[0][impossible_actions] = -1000
 
         self.qnetwork_local.train()
 
@@ -143,9 +149,10 @@ class PokerAgent():
         if random.random() > eps:
             return np.argmax(action_values.cpu().data.numpy())
         else:
-            return random.choice(np.arange(2))
+            return random.choice(possible_actions)
 
     def convert_state(self,state):
+
         '''
         Take in game state and append players state
         :param state:
@@ -174,7 +181,7 @@ class PokerAgent():
             experiences (Tuple[torch.Tensor]): tuple of (s, a, r, s', done) tuples
             gamma (float): discount factor
         """
-        states, actions, rewards, next_states, dones = experiences
+        states, actions,possible_actions, rewards, next_states, dones = experiences
 
         # Get max predicted Q values (for next states) from target model
         Q_targets_next = self.qnetwork_target(next_states).detach().max(1)[0].unsqueeze(1)
@@ -186,6 +193,17 @@ class PokerAgent():
         Q_expected = self.qnetwork_local(states).gather(1, actions)
 
         # Compute loss
+        # we dont want to update actions which are impossible to take
+        # se we will just set the impossible actions to the expected Q values
+        # so that way the loss will be 0
+        Q_targets_copy = Q_expected
+
+        #Q_targets_copy[[x for x in range(states.shape[0])],possible_actions] = Q_expected[]
+
+        #for i in range(states.shape[0]):
+
+        #    Q_targets_copy[i] = Q_expected[i][possible_actions[i]]
+
         loss = F.mse_loss(Q_expected, Q_targets)
 
         # Minimize the loss
@@ -202,11 +220,15 @@ class PokerAgent():
 
     def learn_policy(self,experiences):
 
-        states,actions = experiences
+        states,actions,possible_actions = experiences
 
         predict_actions = self.policynetwork(states)
 
         predict_prob = F.softmax(predict_actions)
+
+        #impossible_actions = [action for action in range(self.action_size) if action not in possible_actions]
+
+        #predict_prob[impossible_actions] = 0
 
         loss = F.nll_loss(predict_prob,actions.reshape((predict_prob.shape[0])))
 
@@ -222,20 +244,21 @@ class PokerAgent():
         :param games_state:
         :return:
         '''
-        state, action, reward, next_state, done = games_state
+        state, action, possible_actions, reward, next_state, done = games_state
 
         state = self.convert_state(state)
 
         next_state = self.convert_state(next_state)
 
+        possible_actions = torch.IntTensor(possible_actions)
+
         # Save experience in replay memory
-        self.rl_replay_memory.add(state, action, reward, next_state, done)
+        self.rl_replay_memory.add(state, action,possible_actions, reward, next_state, done)
 
         if self.current_policy == 'epsilon-greedy':  # dont store if we are 'on policy'
+
             # Save experience in replay memory
-            self.sl_replay_memory.add(state, action)
-
-
+            self.sl_replay_memory.add(state, action,possible_actions)
 
     def soft_update(self, local_model, target_model, tau):
         """Soft update model parameters.
@@ -267,13 +290,14 @@ class ReplayBuffer:
         self.action_size = action_size
         self.memory = deque(maxlen=buffer_size)
         self.batch_size = batch_size
-        self.experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
+        self.experience = namedtuple("Experience", field_names=["state", "action","possible_actions", "reward", "next_state", "done"])
         self.seed = random.seed(seed)
 
-    def add(self,state, action, reward, next_state, done):
+    def add(self,state, action,possible_actions, reward, next_state, done):
 
         """Add a new experience to memory."""
-        e = self.experience(state, action, reward, next_state, done)
+        e = self.experience(state, action,possible_actions, reward, next_state, done)
+
         self.memory.append(e)
 
     def sample(self):
@@ -282,13 +306,14 @@ class ReplayBuffer:
 
         states = torch.from_numpy(np.vstack([e.state for e in experiences if e is not None])).float().to(device)
         actions = torch.from_numpy(np.vstack([e.action for e in experiences if e is not None])).long().to(device)
+        possible_actions = torch.from_numpy(np.vstack([e.possible_actions for e in experiences if e is not None])).long().to(device)
         rewards = torch.from_numpy(np.vstack([e.reward for e in experiences if e is not None])).float().to(device)
         next_states = torch.from_numpy(np.vstack([e.next_state for e in experiences if e is not None])).float().to(
             device)
         dones = torch.from_numpy(np.vstack([e.done for e in experiences if e is not None]).astype(np.uint8)).float().to(
             device)
 
-        return (states, actions, rewards, next_states, dones)
+        return (states, actions,possible_actions, rewards, next_states, dones)
 
     def __len__(self):
         """Return the current size of internal memory."""
@@ -311,12 +336,13 @@ class ReservoirBuffer:
         self.action_size = action_size
         self.memory = deque(maxlen=buffer_size)
         self.batch_size = batch_size
-        self.experience = namedtuple("Experience", field_names=["state", "action"])
+        self.experience = namedtuple("Experience", field_names=["state", "action","possible_actions"])
         self.seed = random.seed(seed)
 
-    def add(self,state, action):
+    def add(self,state, action,possible_actions):
         """Add a new experience to memory."""
-        e = self.experience(state, action)
+        e = self.experience(state, action,possible_actions)
+
         self.memory.append(e)
 
     def sample(self):
@@ -340,7 +366,9 @@ class ReservoirBuffer:
 
         actions = torch.from_numpy(np.vstack([e.action for e in reservoir if e is not None])).long().to(device)
 
-        return (states, actions)
+        possible_actions = torch.from_numpy(np.vstack([e.possible_actions for e in reservoir if e is not None])).long().to(device)
+
+        return (states, actions,possible_actions)
 
     def __len__(self):
         """Return the current size of internal memory."""
