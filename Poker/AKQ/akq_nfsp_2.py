@@ -7,7 +7,7 @@ import pandas as pd
 
 import torch.nn.functional as F
 
-from Poker.AKQ.agents import PokerAgent
+from Poker.AKQ.agents import PokerAgent,PokerAgent2
 
 # Defining a Game simulation and getting rid of our Tree structures
 class Game:
@@ -290,9 +290,9 @@ class Game:
             if (iter % 500) == 0:
                 print("Iteration {}".format(str(iter)))
 
-                self.display_experience_replay()
+                #self.display_experience_replay()
 
-                #self.show_sb_policy()
+                self.show_sb_policy()
 
             # print("Running iteration: {}".format(str(iter)))
 
@@ -413,6 +413,7 @@ class GameState:
 
 
 def run_nfsp():
+
     STATE_SIZE = 11
     ACTION_SIZE = 4
     SEED = 1
@@ -424,9 +425,9 @@ def run_nfsp():
 
     NFSPGame = Game()
 
-    player1 = PokerAgent(STATE_SIZE, ACTION_SIZE, SEED, State, NFSPGame.hands, 'SB', 1.0)
+    player1 = PokerAgent2(STATE_SIZE, ACTION_SIZE, SEED, State, NFSPGame.hands, 'SB', 1.0)
 
-    player2 = PokerAgent(STATE_SIZE, ACTION_SIZE, SEED, State, NFSPGame.hands, 'BB', 1.0)
+    player2 = PokerAgent2(STATE_SIZE, ACTION_SIZE, SEED, State, NFSPGame.hands, 'BB', 1.0)
 
     NFSPGame.init_game(player1, player2, State)
 

@@ -1,67 +1,21 @@
+
 # coding=utf-8
 import numpy as np
 import torch
 import json
 import pandas as pd
+
 import torch.nn.functional as F
 
-from collections import OrderedDict
-from Poker.AKQ.agents import PokerAgent
+from Poker.Leduc.agents import PokerAgent
 
-'''
-class Player:
-
-    def __init__(self, name, hands, game_state, stack_size=1):
-
-        self.game_state = game_state
-        self.hand = None
-        self.hands = hands
-        self.name = name
-        self.stack_size = stack_size
-
-    def action(self):
-
-        if self.name == 'SB':
-
-            return np.random.choice([0, 1])
-
-        elif self.name == 'BB':
-
-            sb_action = np.where(self.game_state.game_state[0] == 1.0)[0]
-            print(str(self.game_state.game_state))
-            print(str(sb_action))
-            if sb_action == 0:
-                return 2  # force call
-
-            elif sb_action == 1:
-                return 1  # force check
-
-            else:
-                print("sb took illegal action")
-
-    def get_hand_repr(self):
-
-        hand_repr = np.zeros(3)
-
-        hand_repr[np.where(self.hands == self.hand)[0][0]] = 1
-
-        return hand_repr
-
-    def get_state(self):
-        """
-            Get the current game state and and pre append
-            the players holding
-        """
-        hand_repr = self.get_hand_repr()
-        return np.concatenate((hand_repr, self.game_state))
-'''
 
 # Defining a Game simulation and getting rid of our Tree structures
 class Game:
 
     def __init__(self):
 
-        self.actions = ['bet', 'check', 'call', 'fold']
+        self.actions = ['raise', 'check', 'call', 'fold']
         self.anticipatory = 0.2
         self.GameState = None  # tensor that tracks current state
         self.current_player = None
@@ -72,6 +26,22 @@ class Game:
         self.BB = None
         self.terminal_state = False
 
+    def check_terminal(self,state):
+        '''
+        Function to check whether the state is terminal or not
+        Conditions:
+            A: The state is terminal if the last round with an action
+            taken is > # of rounds in game.
+
+            B: If current round is max round and number raises == max raises
+
+        :Input: Tensor (2,2,3,2)
+        :return: Boolean
+        '''
+
+        # Condition A
+        pass
+
     def deal(self):
 
         return np.random.choice(self.hands, 2, replace=False)
@@ -79,7 +49,7 @@ class Game:
     def display_state_prediction(self,state):
 
         current_policy = {
-            "bet": 0,
+            "raise": 0,
             "check": 0
         }
 
@@ -196,48 +166,82 @@ class Game:
                 print("sb took illegal action")
 
     def get_next_state(self, a):
-
-
-        '''
+        """
         The Game should be able to receive an action
         from one of the players and be able to update the current
-        game state
-        For the simple AKQ the only information the game needs is
-        (player,action)
-        In a more complex environment like LHE the game needs to be
-        able to know more information
-        (player, round, num_raises,action) + (board repr)
+        game state.
+        The Game state has a number of things that need to be tracked here
+            -- Number raises
+            -- Round number
+            -- if its a leaf / terminal state
+            -- Pot
+            -- Player stacks
 
-        '''
+        """
 
-        #print("Get next state")
-        #print("CUrrent state: ")
-        #print(str(self.GameState.game_state))
+        current_round = self.GameState.current_round.copy()
+
         if self.GameState.current_player.name == 'SB':
 
-            self.GameState.game_state[0][a] = 1
+            if self.actions[a] == 'raise':
 
-            if self.actions[a] == 'bet':
+                self.GameState.number_raises += 1.0
 
                 self.GameState.current_pot += 1.0
 
                 self.SB.stack_size -= 1.0
 
+            elif self.actions[a] == 'call':
 
+                self.GameState.current_pot += 1.0
+
+                self.SB.stack_size -= 1.0
+
+                self.update_current_round()
+
+            elif self.actions[a] == 'check':
+                # if the sb checks that will always terminate a round
+                self.update_current_round()
+
+            elif self.actions[a] == 'fold':
+
+                self.GameState.terminal_state = True
+
+            # update state now that all actions have been porcessed
+            self.GameState.game_state[0][current_round][self.GameState.num_raises][a] = 1
+            # switch the current player
             self.GameState.current_player.name = 'BB'
 
         elif self.GameState.current_player.name == 'BB':
 
-            self.GameState.game_state[1][a] = 1
+            if self.actions[a] == 'raise':
 
-            if self.actions[a] == 'call':
+                self.GameState.number_raises += 1.0
 
                 self.GameState.current_pot += 1.0
+
                 self.BB.stack_size -= 1.0
 
-            self.GameState.current_player.name = 'SB'
+            elif self.actions[a] == 'call':
 
-            self.terminal_state = True
+                self.GameState.current_pot += 1.0
+
+                self.BB.stack_size -= 1.0
+
+                self.update_current_round()
+
+            elif self.actions[a] == 'check':
+                # If BB checks Do nothing. Below we will update the current player
+                pass
+
+            elif self.actions[a] == 'fold':
+
+                self.update_current_round()
+
+            # update state now that all actions have been porcessed
+            self.GameState.game_state[1][current_round][self.GameState.num_raises][a] = 1
+            # switch the current player
+            self.GameState.current_player.name = 'SB'
 
         return self.GameState.game_state
 
@@ -263,14 +267,27 @@ class Game:
     def reward(self):
 
         '''
-            For the AKQ simple game this is... well simple but in general
-            we will need to do an evaluation based off of how the episode
-            was terminated.
+            get last action that was taken
+
+            Fold:
+                Then reward current player since the player that folded is no longer current player
+
+            Call:
+                Doesnt matter who called. Just evaluate hand v hand
+
+            Check:
+                Again just evaluate hand v hand
         '''
 
         # get last 'node' in game state where action > 0
 
-        i, j = np.where(self.GameState.game_state == 1)
+        if self.GameState.current_player.name == 'SB': # SB is current that means BB was last to act
+
+            i, j, k = np.where(self.GameState.game_state[1] == 1)
+
+        elif self.GameState.current_player.name == 'BB': # BB is current that means SB was last to act
+
+            i, j, k = np.where(self.GameState.game_state[0] == 1)
 
         terminal_action_index = j[-1]
 
@@ -313,12 +330,20 @@ class Game:
 
         for iter in range(iters):
 
+            if(iter % 1000) == 0:
+
+                print("Iteration {}".format(str(iter)))
+
+                #self.display_experience_replay()
+
+                self.show_sb_policy()
+
+            #print("Running iteration: {}".format(str(iter)))
 
             self.terminal_state = False
 
-            self.SB.stack_size = 1.0
-
-            self.BB.stack_size = 1.0
+            self.SB.stack_size = 5.0
+            self.BB.stack_size = 5.0
 
             hand1, hand2 = self.deal()
 
@@ -326,29 +351,18 @@ class Game:
 
             self.BB.hand = hand2
 
-            game_state_init = OrderedDict()
-
-            game_state_init['player'] = torch.Tensor(np.array[1,0])
-            game_state_init['round'] = torch.zeros(2)
-            game_state_init['raises'] = torch.zeros(3)
-            game_state_init['action'] = torch.zeros(2)
-
-            self.GameState.current_pot = 1.0
-
-            self.GameState.game_state = game_state_init
-
-            self.GameState.current_player = self.SB
+            self.GameState.reset(self.SB)
 
             # set policy
             uniform = np.random.uniform(1)
 
             if self.anticipatory <= uniform:
 
-                self.SB.current_policy = 'epsilon-greedy'
+                self.GameState.current_policy = 'epsilon-greedy'
 
             else:
 
-                self.SB.current_policy = 'policy'
+                self.GameState.current_policy = 'policy'
 
             r = self.simulate()
 
@@ -358,32 +372,31 @@ class Game:
 
     def simulate(self):
 
-        current_state = self.GameState.game_state
+        current_state = self.GameState.game_state.copy()
+
+        board = self.GameState.board.copy()
 
         current_player = self.GameState.current_player.name
 
-        if self.terminal_state == True:
+        if self.terminal_state:
 
             return self.reward()
 
         action = self.get_action(current_state)
 
-        next_state = self.get_next_state(action)
+        next_state = self.get_next_state(action).copy()
 
         done = self.terminal_state
 
         r = self.simulate()
 
+        if current_player == 'SB':
 
-        if done:
+            self.SB.step((current_state,action,r['SB'],next_state,board,done))
 
-            self.SB.step((current_state,action,r['SB'],next_state,done))
-        else:
+        elif current_player == 'BB':
 
-            self.SB.step((current_state,action,0,next_state,done))
-
-
-        #self.BB.step((current_state,action,r['BB'],next_state,done))
+            self.BB.step((current_state,action,r['BB'],next_state,board,done))
 
         return r
 
@@ -431,17 +444,45 @@ class Game:
         self.SB.qnetwork_local.train()
         self.SB.qnetwork_target.train()
 
+    def update_current_round(self):
+        """
+        helper function to update the current round
+        and reset number of raises
+        :return:
+        """
+        self.GameState.current_round += 1
+        self.GameState.board[np.random.randint(3)] = 1 # draw random card to represent the board
+        self.GameState.number_raises = 0
+
+        if self.GameState.current_round > 1:
+
+            self.GameState.terminal_state = True
+
 
 class GameState:
     '''
     Allow us to be able to pass state between classes
     '''
-    def __init__(self,game_state,current_player,pot):
+    def __init__(self,game_state,current_player,pot,current_policy='epsilon-greedy'):
 
-
-        self.game_state = game_state  # tensor that tracks current state
+        self.board = np.zeros(3)
         self.current_player = current_player
-        self.pot = pot # starting amount = 1
+        self.current_policy = current_policy
+        self.current_round = 0
+        self.game_state = game_state  # tensor that tracks current state
+        self.num_raises = 0
+        self.pot = pot  # starting amount = 1
+        self.terminal_state = False
+
+    def reset(self,player):
+
+        self.board = np.zeros(3)
+        self.current_player = player
+        self.current_round = 0
+        self.game_state = np.zeros((2, 2, 3, 2))
+        self.num_raises = 0
+        self.terminal_state = False
+        self.pot = 1
 
 
 def run_nfsp():
@@ -449,22 +490,18 @@ def run_nfsp():
     STATE_SIZE = 30
     ACTION_SIZE = 4
     SEED = 1
-    ITERS = 500
+    ITERS = 50000
 
-    game_state_init = OrderedDict()
-
-    game_state_init['player'] = torch.zeros(2)
-    game_state_init['round'] = torch.zeros(2)
-    game_state_init['raises'] = torch.zeros(3)
-    game_state_init['action'] = torch.zeros(2)
+    # Game state { player, round, num raises, action}
+    game_state_init = np.zeros((2,2,3,2))
 
     State = GameState(game_state_init, current_player=None, pot=1.0)
 
     NFSPGame = Game()
 
-    player1 = PokerAgent(STATE_SIZE, ACTION_SIZE, SEED, State, NFSPGame.hands, 'SB', 1.0)
+    player1 = PokerAgent(STATE_SIZE, ACTION_SIZE, SEED, State, NFSPGame.hands, 'SB', 5.0)
 
-    player2 = PokerAgent(STATE_SIZE, ACTION_SIZE, SEED, State, NFSPGame.hands, 'BB', 1.0)
+    player2 = PokerAgent(STATE_SIZE, ACTION_SIZE, SEED, State, NFSPGame.hands, 'BB', 5.0)
 
     NFSPGame.init_game(player1,player2,State)
 
