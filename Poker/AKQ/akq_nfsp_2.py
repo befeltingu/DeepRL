@@ -407,6 +407,7 @@ class GameState:
     '''
 
     def __init__(self, game_state, current_player, pot):
+
         self.game_state = game_state  # tensor that tracks current state
         self.current_player = current_player
         self.pot = pot  # starting amount = 1

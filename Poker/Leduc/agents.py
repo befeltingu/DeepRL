@@ -22,6 +22,129 @@ SOFT_UPDATE_EVERY = 8
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+class RandomJack():
+    """
+        Hi im random jack. I dont know what im doing
+    """
+
+    def __init__(self, game_state, hands, name, stack_size):
+        """
+        :param game_state:
+        :param hands:
+        :param name:
+        :param stack_size:
+        """
+        # Poker specific attributes
+        self.game_state = game_state
+        self.hand = None  # index of hand 0,1 or 2
+        self.board = None  # vector length 3
+        self.hands = hands
+        self.name = name
+        self.stack_size = stack_size
+
+    def action(self, current_state, possible_actions):
+
+        return np.random.choice(possible_actions)
+
+
+class LeducAgent():
+    """
+    Used for evaluating leduc model. This was a guess at a good strategy
+    """
+
+    def __init__(self, game_state, hands, name, stack_size):
+        """
+
+        :param game_state:
+        :param hands:
+        :param name:
+        :param stack_size:
+        """
+        # Poker specific attributes
+        self.game_state = game_state
+        self.hand = None  # index of hand 0,1 or 2
+        self.board = None  # vector length 3
+        self.hands = hands
+        self.name = name
+        self.stack_size = stack_size
+
+    def action(self, current_state,possible_actions):
+
+        # First pre flop actions
+        # actions are index of ['raise', 'check', 'call', 'fold']
+
+        rand_uni = np.random.random()
+
+        if self.game_state.current_round == 0:
+
+            if self.name == 'SB':  # just raise everything from SB
+                return 0
+
+            if self.name == 'BB':
+
+                if self.hand in [0, 1]:  # A
+
+                    return 0
+
+                elif self.hand in [2, 3]:  # K
+
+                    return 2
+
+                elif self.hand in [4, 5]:  # Q
+
+                    if rand_uni <= 1 / 3.0:
+                        return 0
+
+                    else:
+                        return 3
+
+        elif self.game_state.current_round == 1:
+
+            # Flop actions
+            board_card = np.where(self.game_state.board == 1)[0][0]
+
+            # if we have pair
+            if self.hand == board_card:
+
+                if 0 in possible_actions:
+
+                    return 0
+
+                else:
+                    return 2
+
+            if self.hand in [0, 1]:  # A
+
+                if 0 in possible_actions:
+                    return 0
+
+                else:
+                    return 2
+
+            elif self.hand in [2, 3]:  # K
+
+                if 1 in possible_actions:  # always check
+                    return 1
+
+                if rand_uni <= 1 / 3.0:
+                    return 2
+
+                else:
+                    return 3
+
+            elif self.hand in [4, 5]:  # Q
+
+                if 1 in possible_actions:  # always check
+
+                    return 1
+
+                if rand_uni <= 1 / 4.0:
+
+                    return 0
+
+                else:
+                    return 3
+
 
 class PokerAgent():
     """Interacts with and learns from the environment."""
@@ -93,18 +216,18 @@ class PokerAgent():
 
         self.eps = max(self.eps_end, self.eps_decay * self.eps)
 
-    def action(self,state):
+    def action(self,state,possible_actions):
 
 
         if self.current_policy == 'epsilon-greedy':
 
-            return self.act_greedy(state,self.eps)
+            return self.act_greedy(state,possible_actions,self.eps)
 
         elif self.current_policy == 'policy':
 
-            return self.act_policy(state,self.eps)
+            return self.act_policy(state,possible_actions,self.eps)
 
-    def act_policy(self,state,eps=0.):
+    def act_policy(self,state,possible_actions,eps=0.):
 
         state = self.convert_state(state)
 
@@ -113,14 +236,15 @@ class PokerAgent():
         with torch.no_grad():
             action_values = self.policynetwork(state)
 
-        self.policynetwork.train()
+        for i in range(4):
+            if i not in possible_actions:
+                action_values[0][i] = -1000
 
-        action_values[0][2] = -1000
-        action_values[0][3] = -1000
+        self.policynetwork.train()
 
         return np.argmax(action_values.cpu().data.numpy())
 
-    def act_greedy(self, state, eps=0.):
+    def act_greedy(self, state,possible_actions, eps=0.):
 
         """Returns actions for given state as per current policy.
 
@@ -137,8 +261,9 @@ class PokerAgent():
         with torch.no_grad():
             action_values = self.qnetwork_local(state)
 
-        action_values[0][2] = -1000
-        action_values[0][3] = -1000
+        for i in range(4):
+            if i not in possible_actions:
+                action_values[0][i] = -1000
 
         self.qnetwork_local.train()
 
@@ -146,9 +271,9 @@ class PokerAgent():
         if random.random() > eps:
             return np.argmax(action_values.cpu().data.numpy())
         else:
-            return random.choice(np.arange(2))
+            return random.choice(possible_actions)
 
-    def convert_state(self,state,board):
+    def convert_state(self,state):
         '''
         Take in game state and append players state
         :param state:
@@ -159,13 +284,16 @@ class PokerAgent():
 
         #state = state.reshape((state.shape[0]))
 
-        hand = np.zeros(3)
+        hand = np.zeros(6)
 
         hand[self.hand] = 1
 
-        state = np.concatenate((hand, state))
+        board_card = np.where(self.board == 1)[0]
 
-        state = np.concatenate((state,board))
+        if len(board_card) > 0:
+            hand[board_card[0]] = 1
+
+        state = np.concatenate((hand, state))
 
         state = torch.from_numpy(state).float().unsqueeze(0).to(device)
 
@@ -229,9 +357,9 @@ class PokerAgent():
         '''
         state, action, reward, next_state, board, done = games_state
 
-        state = self.convert_state(state,board)
+        state = self.convert_state(state)
 
-        next_state = self.convert_state(next_state,board)
+        next_state = self.convert_state(next_state)
 
         # Save experience in replay memory
         self.rl_replay_memory.add(state, action, reward, next_state, done)
@@ -239,8 +367,6 @@ class PokerAgent():
         if self.current_policy == 'epsilon-greedy':  # dont store if we are 'on policy'
             # Save experience in replay memory
             self.sl_replay_memory.add(state, action)
-
-
 
     def soft_update(self, local_model, target_model, tau):
         """Soft update model parameters.
