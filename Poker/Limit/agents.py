@@ -9,155 +9,18 @@ import random
 from collections import namedtuple, deque
 from Poker.AKQ.networks import QNetwork,PolicyNetwork
 
-RL_BUFFER_SIZE = int(200000)  # replay buffer size
-SL_BUFFER_SIZE = int(2000000)  # replay buffer size
-BATCH_SIZE = 128  # minibatch size
+BUFFER_SIZE = int(1e5)  # replay buffer size
+BATCH_SIZE = 64  # minibatch size
 GAMMA = 0.99  # discount factor
 TAU = 1e-3  # for soft update of target parameters
-RL_LR = 0.1  # learning rate
+RL_LR = 0.01  # learning rate
 SL_LR = 0.005
 LR = 5e-2
-UPDATE_EVERY = 128  # how often to update the network
-SOFT_UPDATE_EVERY = 300
+UPDATE_EVERY = 1  # how often to update the network
+SOFT_UPDATE_EVERY = 8
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-class RandomJack():
-
-    """
-        Hi im random jack. I dont know what im doing
-    """
-
-    def __init__(self, game_state, hands, name, stack_size):
-        """
-        :param game_state:
-        :param hands:
-        :param name:
-        :param stack_size:
-        """
-        # Poker specific attributes
-        self.game_state = game_state
-        self.hand = None  # index of hand 0,1 or 2
-        self.board = None  # vector length 3
-        self.hands = hands
-        self.name = name
-        self.stack_size = stack_size
-
-    def action(self, current_state, possible_actions):
-
-        return np.random.choice(possible_actions)
-
-
-
-
-
-class LeducAgent():
-    """
-    Used for evaluating leduc model. This was a guess at a good strategy
-    """
-
-    def __init__(self, game_state, hands, name, stack_size):
-        """
-
-        :param game_state:
-        :param hands:
-        :param name:
-        :param stack_size:
-        """
-        # Poker specific attributes
-        self.game_state = game_state
-        self.hand = None  # index of hand 0,1 or 2
-        self.board = None  # vector length 3
-        self.hands = hands
-        self.name = name
-        self.stack_size = stack_size
-
-    def action(self, current_state,possible_actions):
-
-        # First pre flop actions
-        # actions are index of ['raise', 'check', 'call', 'fold']
-
-        rand_uni = np.random.random()
-
-        if self.game_state.current_round == 0:
-
-            if self.name == 'SB':  # just raise everything from SB
-                return 0
-
-            if self.name == 'BB':
-
-                if self.hand in [0, 1]:  # A
-
-                    if 0 in possible_actions:
-                        return 0
-                    else:
-                        return 2
-
-                elif self.hand in [2, 3]:  # K
-
-                    if 1 in possible_actions:
-                        return 1
-                    else:
-                        return 2
-
-                elif self.hand in [4, 5]:  # Q
-
-                    if rand_uni <= 1 / 3.0:
-                        return 0
-
-                    else:
-                        if 1 in possible_actions:
-                            return 1
-                        else:
-                            return 3
-
-        elif self.game_state.current_round == 1:
-
-            # Flop actions
-            board_card = np.where(self.game_state.board == 1)[0][0]
-
-            # if we have pair
-            if self.hand == board_card:
-
-                if 0 in possible_actions:
-
-                    return 0
-
-                else:
-                    return 2
-
-            if self.hand in [0, 1]:  # A
-
-                if 0 in possible_actions:
-                    return 0
-
-                else:
-                    return 2
-
-            elif self.hand in [2, 3]:  # K
-
-                if 1 in possible_actions:  # always check
-                    return 1
-
-                if rand_uni <= 1 / 4.0: # if no check
-                    return 2
-
-                else:
-                    return 3
-
-            elif self.hand in [4, 5]:  # Q
-
-                if 1 in possible_actions:  # always check
-
-                    return 1
-
-                if rand_uni <= 1 / 4.0:
-
-                    return 0
-
-                else:
-                    return 3
 
 
 class PokerAgent():
@@ -176,9 +39,9 @@ class PokerAgent():
         self.state_size = state_size
         self.action_size = action_size
         self.seed = random.seed(seed)
-        self.eps = 1
-        #self.eps_end = 0.00
-        #self.eps_decay = 0.9995
+        self.eps = 1.0
+        self.eps_end = 0.01
+        self.eps_decay = 0.9995
 
         # Poker specific attributes
         self.game_state = game_state
@@ -191,17 +54,17 @@ class PokerAgent():
         # Q-Network
         self.qnetwork_local = QNetwork(state_size, action_size, seed).to(device)
         self.qnetwork_target = QNetwork(state_size, action_size, seed).to(device)
-        self.q_optimizer = optim.SGD(self.qnetwork_local.parameters(), lr=RL_LR)
+        self.q_optimizer = optim.Adam(self.qnetwork_local.parameters(), lr=RL_LR)
 
         # Policy Network
         self.policynetwork = PolicyNetwork(state_size,action_size,seed).to(device)
-        self.p_optimizer = optim.SGD(self.policynetwork.parameters(),lr=SL_LR)
+        self.p_optimizer = optim.Adam(self.policynetwork.parameters(),lr=SL_LR)
 
         # Replay memory. Circular buffer
-        self.rl_replay_memory = ReplayBuffer(action_size, RL_BUFFER_SIZE, BATCH_SIZE, seed)
+        self.rl_replay_memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, seed)
 
         # Surpised learning. Reservoir
-        self.sl_replay_memory = ReservoirBuffer(action_size, SL_BUFFER_SIZE, BATCH_SIZE, seed)
+        self.sl_replay_memory = ReservoirBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, seed)
 
         # Initialize time step (for updating every UPDATE_EVERY steps)
         self.t_step = 0
@@ -228,7 +91,7 @@ class PokerAgent():
 
                 self.learn_policy(experiences)
 
-        #self.eps = max(self.eps_end, self.eps_decay * self.eps)
+        self.eps = max(self.eps_end, self.eps_decay * self.eps)
 
     def action(self,state,possible_actions):
 
@@ -241,7 +104,7 @@ class PokerAgent():
 
             return self.act_policy(state,possible_actions,self.eps)
 
-    def act_policy(self,state,possible_actions):
+    def act_policy(self,state,possible_actions,eps=0.):
 
         state = self.convert_state(state)
 
@@ -439,6 +302,7 @@ class ReplayBuffer:
     def __len__(self):
         """Return the current size of internal memory."""
         return len(self.memory)
+
 
 class ReservoirBuffer:
 
