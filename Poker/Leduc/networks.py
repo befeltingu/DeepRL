@@ -30,7 +30,7 @@ class QNetwork(nn.Module):
 
         model = nn.Sequential(OrderedDict([
             ('ds1',nn.Linear(self.state_size,64)),
-            ('act1', nn.Sigmoid()),
+            ('act1', nn.ReLU()),
             ('ds2', nn.Linear(64,self.action_size))
 
         ]))
@@ -65,7 +65,7 @@ class PolicyNetwork(nn.Module):
 
         model = nn.Sequential(OrderedDict([
             ('ds1', nn.Linear(self.state_size, 64)),
-            ('act1', nn.Sigmoid()),
+            ('act1', nn.ReLU()),
             ('ds2', nn.Linear(64, self.action_size))
 
         ]))

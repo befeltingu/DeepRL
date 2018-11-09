@@ -1065,7 +1065,7 @@ def run_nfsp():
     STATE_SIZE = 30
     ACTION_SIZE = 4
     SEED = 1
-    EPISODES = 1000
+    EPISODES = 500
     ITERS = 500
 
     # Game state { player, round, num raises, action}

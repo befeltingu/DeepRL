@@ -7,26 +7,27 @@ import numpy as np
 import random
 
 from collections import namedtuple, deque
-from Poker.AKQ.networks import QNetwork,PolicyNetwork
+from Poker.Limit.networks import QNetwork,PolicyNetwork
 
-BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 64  # minibatch size
+RL_BUFFER_SIZE = int(600000)  # replay buffer size
+SL_BUFFER_SIZE = int(30000000)  # replay buffer size
+BATCH_SIZE = 256
 GAMMA = 0.99  # discount factor
 TAU = 1e-3  # for soft update of target parameters
-RL_LR = 0.01  # learning rate
-SL_LR = 0.005
+RL_LR = 0.1  # learning rate
+SL_LR = 0.01
 LR = 5e-2
-UPDATE_EVERY = 1  # how often to update the network
-SOFT_UPDATE_EVERY = 8
+UPDATE_EVERY = 256  # how often to update the network
+SOFT_UPDATE_EVERY = 1000
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-class PokerAgent():
+class PokerAgent:
     """Interacts with and learns from the environment."""
 
-    def __init__(self, state_size, action_size, seed,game_state,hands,name,stack_size):
+    def __init__(self, state_size, action_size, seed,game_state,name,stack_size=1000):
         """Initialize an Agent object.
 
         Params
@@ -40,16 +41,13 @@ class PokerAgent():
         self.action_size = action_size
         self.seed = random.seed(seed)
         self.eps = 1.0
-        self.eps_end = 0.01
-        self.eps_decay = 0.9995
 
         # Poker specific attributes
         self.game_state = game_state
-        self.hand = None  # index of hand 0,1 or 2
-        self.board = None  # vector length 3
-        self.hands = hands
+        self.hand = None  # length 52
+        self.hand_bit = None  # bitwise repr of hand from treys library. Length 2
         self.name = name
-        self.stack_size = stack_size
+        self.stack_size = stack_size #
 
         # Q-Network
         self.qnetwork_local = QNetwork(state_size, action_size, seed).to(device)
@@ -61,10 +59,10 @@ class PokerAgent():
         self.p_optimizer = optim.Adam(self.policynetwork.parameters(),lr=SL_LR)
 
         # Replay memory. Circular buffer
-        self.rl_replay_memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, seed)
+        self.rl_replay_memory = ReplayBuffer(action_size, RL_BUFFER_SIZE, BATCH_SIZE, seed)
 
         # Surpised learning. Reservoir
-        self.sl_replay_memory = ReservoirBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, seed)
+        self.sl_replay_memory = ReservoirBuffer(action_size, SL_BUFFER_SIZE, BATCH_SIZE, seed)
 
         # Initialize time step (for updating every UPDATE_EVERY steps)
         self.t_step = 0
@@ -90,8 +88,6 @@ class PokerAgent():
                 experiences = self.sl_replay_memory.sample()
 
                 self.learn_policy(experiences)
-
-        self.eps = max(self.eps_end, self.eps_decay * self.eps)
 
     def action(self,state,possible_actions):
 
@@ -159,18 +155,10 @@ class PokerAgent():
 
         state = state.flatten()
 
-        #state = state.reshape((state.shape[0]))
-
-        hand = np.zeros(6)
-
-        hand[self.hand] = 1
-
-        board_card = np.where(self.board == 1)[0]
-
-        if len(board_card) > 0:
-            hand[board_card[0]] = 1
-
-        state = np.concatenate((hand, state))
+        state = np.concatenate((self.hand, state))
+        state = np.concatenate((self.game_state.flop, state))
+        state = np.concatenate((self.game_state.turn, state))
+        state = np.concatenate((self.game_state.river, state))
 
         state = torch.from_numpy(state).float().unsqueeze(0).to(device)
 
@@ -232,7 +220,7 @@ class PokerAgent():
         :param games_state:
         :return:
         '''
-        state, action, reward, next_state, board, done = games_state
+        state, action, reward, next_state, done = games_state
 
         state = self.convert_state(state)
 

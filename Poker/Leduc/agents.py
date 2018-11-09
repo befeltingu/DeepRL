@@ -23,6 +23,7 @@ SOFT_UPDATE_EVERY = 300
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+
 class RandomJack():
 
     """
@@ -52,7 +53,7 @@ class RandomJack():
 
 
 
-class LeducAgent():
+class LeducAgent:
     """
     Used for evaluating leduc model. This was a guess at a good strategy
     """
@@ -159,8 +160,7 @@ class LeducAgent():
                 else:
                     return 3
 
-
-class PokerAgent():
+class PokerAgent:
     """Interacts with and learns from the environment."""
 
     def __init__(self, state_size, action_size, seed,game_state,hands,name,stack_size):
