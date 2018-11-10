@@ -7,7 +7,7 @@ import numpy as np
 import random
 
 from collections import namedtuple, deque
-from Poker.AKQ.networks import QNetwork,PolicyNetwork
+from Poker.Leduc.networks import QNetwork,PolicyNetwork
 
 RL_BUFFER_SIZE = int(200000)  # replay buffer size
 SL_BUFFER_SIZE = int(2000000)  # replay buffer size
@@ -16,7 +16,6 @@ GAMMA = 0.99  # discount factor
 TAU = 1e-3  # for soft update of target parameters
 RL_LR = 0.1  # learning rate
 SL_LR = 0.005
-LR = 5e-2
 UPDATE_EVERY = 128  # how often to update the network
 SOFT_UPDATE_EVERY = 300
 
@@ -48,10 +47,6 @@ class RandomJack():
     def action(self, current_state, possible_actions):
 
         return np.random.choice(possible_actions)
-
-
-
-
 
 class LeducAgent:
     """
@@ -239,7 +234,7 @@ class PokerAgent:
 
         elif self.current_policy == 'policy':
 
-            return self.act_policy(state,possible_actions,self.eps)
+            return self.act_policy(state,possible_actions)
 
     def act_policy(self,state,possible_actions):
 
@@ -252,11 +247,16 @@ class PokerAgent:
 
         for i in range(4):
             if i not in possible_actions:
-                action_values[0][i] = -1000
+                action_values[0][i] = -np.inf
+
 
         self.policynetwork.train()
 
-        return np.argmax(action_values.cpu().data.numpy())
+        action_prob = F.softmax(action_values[0])
+
+        action = torch.multinomial(action_prob,1)[0].data.numpy()
+
+        return action
 
     def act_greedy(self, state,possible_actions, eps=0.):
 
@@ -327,7 +327,7 @@ class PokerAgent:
         Q_targets_next = self.qnetwork_target(next_states).detach().max(1)[0].unsqueeze(1)
 
         # Compute Q targets for current states
-        Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
+        Q_targets = rewards + (Q_targets_next * (1 - dones))
 
         # Get expected Q values from local model
         Q_expected = self.qnetwork_local(states).gather(1, actions)
@@ -394,7 +394,6 @@ class PokerAgent:
         """
         for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
             target_param.data.copy_(tau * local_param.data + (1.0 - tau) * target_param.data)
-
 
 class ReplayBuffer:
     """Fixed-size buffer to store experience tuples."""

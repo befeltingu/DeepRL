@@ -641,6 +641,7 @@ class Game:
 
         return r
 
+
     def get_action(self, current_state):
         """
 
@@ -874,27 +875,7 @@ class Game:
 
         for iter in range(iters):
 
-            #print("Episode {} ".format(str(iter)))
-            #print("*******************************")
-
-            '''if (iter % 1000) == 0:
-                print("Evaluating model")
-                print("Iteration {}".format(str(iter)))
-
-                hero = self.SB
-                opponent = RandomJack(self.GameState, self.hands, 'BB', 5.0)
-
-                self.evaluate_policy_simple(1000, hero,opponent)
-
-                hero = self.BB
-                opponent = RandomJack(self.GameState, self.hands, 'SB', 5.0)
-
-                self.evaluate_policy_simple(1000, hero,opponent)'''
-
             self.hands = [0, 1, 2, 3, 4, 5]
-
-            self.SB.eps = 1.0 / np.sqrt(iter)
-            self.BB.eps = 1.0 / np.sqrt(iter)
 
             self.terminal_state = False
 
@@ -917,9 +898,12 @@ class Game:
             self.GameState.reset(self.SB)
 
             # set policy
-            uniform = np.random.uniform(1)
+            uniform = np.random.uniform(0,1)
 
-            if self.anticipatory <= uniform:
+            if self.anticipatory >= uniform:
+
+                self.SB.eps = 1.0 / np.sqrt(iter)
+                self.BB.eps = 1.0 / np.sqrt(iter)
 
                 self.SB.current_policy = 'epsilon-greedy'
                 self.BB.current_policy = 'epsilon-greedy'
@@ -1065,7 +1049,7 @@ def run_nfsp():
     STATE_SIZE = 30
     ACTION_SIZE = 4
     SEED = 1
-    EPISODES = 500
+    EPISODES = 1000
     ITERS = 500
 
     # Game state { player, round, num raises, action}

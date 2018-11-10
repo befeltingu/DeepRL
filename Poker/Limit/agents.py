@@ -111,11 +111,15 @@ class PokerAgent:
 
         for i in range(4):
             if i not in possible_actions:
-                action_values[0][i] = -1000
+                action_values[0][i] = -np.inf
 
         self.policynetwork.train()
 
-        return np.argmax(action_values.cpu().data.numpy())
+        action_prob = F.softmax(action_values[0])
+
+        action = torch.multinomial(action_prob, 1)[0].data.numpy()
+
+        return action
 
     def act_greedy(self, state,possible_actions, eps=0.):
 
@@ -178,7 +182,7 @@ class PokerAgent:
         Q_targets_next = self.qnetwork_target(next_states).detach().max(1)[0].unsqueeze(1)
 
         # Compute Q targets for current states
-        Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
+        Q_targets = rewards + (Q_targets_next * (1 - dones))
 
         # Get expected Q values from local model
         Q_expected = self.qnetwork_local(states).gather(1, actions)

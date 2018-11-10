@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0be8b715-1930-4c82-9119-1f694f37af3f" name="Default" comment="DS - Leduc is running but need to finish eval code. Going to refactor s.t. the main sim function gets passed the agents to evaluate">
-      <change afterPath="$PROJECT_DIR$/Poker/Limit/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Poker/Limit/agents.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Poker/Limit/networks.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Poker/Limit/run.py" afterDir="false" />
+    <list default="true" id="0be8b715-1930-4c82-9119-1f694f37af3f" name="Default" comment="DS - Limit holdem NFSP is running now I need to build out a good way to evaluate its play">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Poker/Leduc/agents.py" beforeDir="false" afterPath="$PROJECT_DIR$/Poker/Leduc/agents.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Poker/Leduc/networks.py" beforeDir="false" afterPath="$PROJECT_DIR$/Poker/Leduc/networks.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Poker/Leduc/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/Poker/Leduc/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Poker/Limit/agents.py" beforeDir="false" afterPath="$PROJECT_DIR$/Poker/Limit/agents.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,7 +17,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/DeepRL$akq_nfsp.coverage" NAME="akq_nfsp Coverage Results" MODIFIED="1541271141300" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Poker/AKQ" />
     <SUITE FILE_PATH="coverage/DeepRL$BlackJack.coverage" NAME="BlackJack Coverage Results" MODIFIED="1535025298631" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BlackJack" />
-    <SUITE FILE_PATH="coverage/DeepRL$run__1_.coverage" NAME="run_leduc Coverage Results" MODIFIED="1541636253145" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Poker/Leduc" />
+    <SUITE FILE_PATH="coverage/DeepRL$run__1_.coverage" NAME="run_leduc Coverage Results" MODIFIED="1541859172953" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Poker/Leduc" />
     <SUITE FILE_PATH="coverage/DeepRL$mountain_car.coverage" NAME="mountain_car Coverage Results" MODIFIED="1536293338344" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Gym" />
     <SUITE FILE_PATH="coverage/DeepRL$cartpole.coverage" NAME="cartpole Coverage Results" MODIFIED="1536278426289" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Gym" />
     <SUITE FILE_PATH="coverage/DeepRL$blackjack.coverage" NAME="blackjack Coverage Results" MODIFIED="1534697433364" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Dash" />
@@ -44,15 +42,15 @@
           <entry key="Python Console" value="28" />
           <entry key="dummy" value="21" />
           <entry key="json" value="14" />
-          <entry key="py" value="20205" />
-          <entry key="txt" value="359" />
+          <entry key="py" value="23748" />
+          <entry key="txt" value="601" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="JSON" value="14" />
-          <entry key="PLAIN_TEXT" value="380" />
-          <entry key="Python" value="20233" />
+          <entry key="PLAIN_TEXT" value="622" />
+          <entry key="Python" value="23776" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -60,76 +58,53 @@
           <entry key="ipynb" value="19" />
           <entry key="json" value="5" />
           <entry key="md" value="1" />
-          <entry key="png" value="32" />
-          <entry key="py" value="89" />
+          <entry key="png" value="57" />
+          <entry key="py" value="110" />
           <entry key="txt" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="IPNB" value="19" />
-          <entry key="Image" value="32" />
+          <entry key="Image" value="57" />
           <entry key="JSON" value="5" />
           <entry key="Markdown" value="1" />
           <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="89" />
+          <entry key="Python" value="110" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Poker/Leduc/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="586">
-              <caret line="1080" lean-forward="true" selection-start-line="1080" selection-end-line="1080" />
+            <state relative-caret-position="396">
+              <caret line="1051" column="19" selection-start-line="1051" selection-start-column="19" selection-end-line="1051" selection-end-column="19" />
               <folding>
                 <element signature="e#15#33#0" expanded="true" />
-                <element signature="e#237#10340#0" />
+                <element signature="e#237#10433#0" />
                 <element signature="e#2472#5733#0" />
                 <element signature="e#5777#6441#0" />
                 <element signature="e#6496#6769#0" />
                 <element signature="e#6823#8268#0" />
-                <element signature="e#11466#12569#0" />
-                <element signature="e#12620#13988#0" />
-                <element signature="e#14029#14511#0" />
-                <element signature="e#14582#15483#0" />
-                <element signature="e#15541#16834#0" />
-                <element signature="e#16890#17422#0" />
-                <element signature="e#17473#17864#0" />
+                <element signature="e#11559#12662#0" />
+                <element signature="e#12713#14081#0" />
+                <element signature="e#17566#17957#0" />
                 <element signature="e#18011#18348#0" />
-                <element signature="e#22417#23081#0" />
-                <element signature="e#23136#23409#0" />
-                <element signature="e#23463#24908#0" />
-                <element signature="e#29149#29923#0" />
-                <marker date="1541636253138" expanded="true" signature="10434:10436" ph="..." />
-                <marker date="1541636253138" expanded="false" signature="11021:11417" ph="..." />
-                <marker date="1541636253138" expanded="true" signature="14113:17516" ph="..." />
-                <marker date="1541636253138" expanded="true" signature="15625:16928" ph="..." />
-                <marker date="1541636253138" expanded="true" signature="18382:18391" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Poker/Limit/run.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="260" lean-forward="true" selection-start-line="260" selection-end-line="260" />
-              <folding>
-                <element signature="e#31#49#0" expanded="true" />
-                <element signature="e#1310#1385#0" />
-                <element signature="e#1442#2610#0" />
-                <element signature="e#2661#4029#0" />
-                <element signature="e#4070#4552#0" />
-                <element signature="e#4622#5523#0" />
-                <element signature="e#5581#6874#0" />
-                <element signature="e#6930#7462#0" />
-                <element signature="e#7513#7904#0" />
-                <element signature="e#7958#9108#0" />
-                <element signature="e#9151#12412#0" />
+                <element signature="e#18391#21652#0" />
+                <element signature="e#21696#22360#0" />
+                <element signature="e#22415#22688#0" />
+                <element signature="e#22742#24187#0" />
+                <element signature="e#26072#26764#0" />
+                <element signature="e#26805#27904#0" />
+                <element signature="e#27950#28497#0" />
+                <marker date="1541859172947" expanded="true" signature="10434:10436" ph="..." />
+                <marker date="1541859172947" expanded="false" signature="11021:11417" ph="..." />
+                <marker date="1541859172947" expanded="false" signature="14113:17516" ph="..." />
+                <marker date="1541859172947" expanded="true" signature="15625:16928" ph="..." />
+                <marker date="1541859172947" expanded="true" signature="18383:18392" ph="..." />
               </folding>
             </state>
           </provider>
@@ -138,35 +113,33 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Poker/Leduc/agents.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="142" column="36" selection-start-line="142" selection-start-column="36" selection-end-line="142" selection-end-column="36" />
+            <state relative-caret-position="262">
+              <caret line="384" column="8" selection-start-line="384" selection-start-column="8" selection-end-line="384" selection-end-column="8" />
               <folding>
                 <element signature="e#16#28#0" expanded="true" />
-                <element signature="e#609#1213#0" />
-                <element signature="e#1389#1842#0" />
-                <element signature="e#2328#3045#0" />
-                <element signature="e#3703#4395#0" />
-                <element signature="e#4446#4881#0" />
-                <element signature="e#4934#6041#0" />
-                <element signature="e#6092#6401#0" />
-                <element signature="e#6449#7147#0" />
-                <element signature="e#7218#7720#0" />
-                <element signature="e#7747#9596#0" />
-                <element signature="e#9627#11173#0" />
-                <marker date="1541635883339" expanded="false" signature="1284:1287" ph="..." />
-                <marker date="1541635883339" expanded="true" signature="3923:3924" ph="..." />
+                <element signature="e#674#1286#0" />
+                <element signature="e#1316#3923#0" />
+                <element signature="e#4101#5629#0" />
+                <element signature="e#6718#7158#0" />
+                <element signature="e#7949#8457#0" />
+                <element signature="e#9668#9977#0" />
+                <element signature="e#10025#10711#0" />
+                <element signature="e#11309#13158#0" />
+                <element signature="e#13188#14734#0" />
+                <marker date="1541856791938" expanded="true" signature="1277:1278" ph="..." />
+                <marker date="1541856791938" expanded="true" signature="3909:3910" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Poker/Leduc/networks.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Poker/Limit/agents.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1185">
-              <caret line="79" selection-start-line="79" selection-end-line="79" />
+            <state relative-caret-position="295">
+              <caret line="111" column="26" lean-forward="true" selection-start-line="111" selection-start-column="26" selection-end-line="111" selection-end-column="26" />
               <folding>
-                <element signature="e#17#29#0" expanded="true" />
+                <element signature="e#16#28#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -184,14 +157,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>self.current_game_state</find>
-      <find>Agent</find>
-      <find>soft_update</find>
-      <find>np.conc</find>
-      <find>learn_q</find>
-      <find>reshape</find>
-      <find>terminal_state</find>
-      <find>convert_state</find>
       <find>LR</find>
       <find>actions</find>
       <find>episode_id</find>
@@ -214,6 +179,14 @@
       <find>Leduc</find>
       <find>ReplayBuffer</find>
       <find>self.eps</find>
+      <find>self.board</find>
+      <find>self.hands</find>
+      <find>self.hand</find>
+      <find>self.stack_size</find>
+      <find>boa</find>
+      <find>get_winning_player</find>
+      <find>stack_size</find>
+      <find>GAMM</find>
     </findStrings>
     <replaceStrings>
       <replace>self.GameState</replace>
@@ -265,15 +238,16 @@
         <option value="$PROJECT_DIR$/Poker/AKQ/tests.ipynb" />
         <option value="$PROJECT_DIR$/Poker/AKQ/agents.py" />
         <option value="$PROJECT_DIR$/Poker/Leduc/__init__.py" />
-        <option value="$PROJECT_DIR$/Poker/Leduc/networks.py" />
         <option value="$PROJECT_DIR$/Poker/AKQ/akq_nfsp.py" />
         <option value="$PROJECT_DIR$/Poker/AKQ/akq_nfsp_2.py" />
-        <option value="$PROJECT_DIR$/Poker/Limit/networks.py" />
         <option value="$PROJECT_DIR$/Poker/Limit/__init__.py" />
-        <option value="$PROJECT_DIR$/Poker/Limit/agents.py" />
+        <option value="$USER_HOME$/virtualenvs/DeepRL/lib/python3.6/site-packages/treys/deck.py" />
+        <option value="$PROJECT_DIR$/Poker/Limit/networks.py" />
         <option value="$PROJECT_DIR$/Poker/Limit/run.py" />
+        <option value="$PROJECT_DIR$/Poker/Leduc/networks.py" />
         <option value="$PROJECT_DIR$/Poker/Leduc/agents.py" />
         <option value="$PROJECT_DIR$/Poker/Leduc/run.py" />
+        <option value="$PROJECT_DIR$/Poker/Limit/agents.py" />
       </list>
     </option>
   </component>
@@ -304,12 +278,6 @@
               <item name="DeepRL" type="b2602c69:ProjectViewProjectNode" />
               <item name="DeepRL" type="462c0819:PsiDirectoryNode" />
               <item name="Poker" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DeepRL" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DeepRL" type="462c0819:PsiDirectoryNode" />
-              <item name="Poker" type="462c0819:PsiDirectoryNode" />
-              <item name="Leduc" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="DeepRL" type="b2602c69:ProjectViewProjectNode" />
@@ -528,7 +496,21 @@
       <option name="project" value="LOCAL" />
       <updated>1541541049660</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="DS - Leduc NFSP seems to be 'working' ok. Still need to build the ability to evaluate first best response opponent. Started building a limit bot">
+      <created>1541696007037</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1541696007037</updated>
+    </task>
+    <task id="LOCAL-00007" summary="DS - Limit holdem NFSP is running now I need to build out a good way to evaluate its play">
+      <created>1541803865271</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1541803865271</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TodoView">
@@ -550,7 +532,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49928468" visible="true" weight="0.26506025" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.2746988" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.40361446" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32891566" />
@@ -579,7 +561,9 @@
     <MESSAGE value="DS - most of the code is done for AKQ #2 but have some bugs to work out" />
     <MESSAGE value="DS - Working on Leduc version of NFSP" />
     <MESSAGE value="DS - Leduc is running but need to finish eval code. Going to refactor s.t. the main sim function gets passed the agents to evaluate" />
-    <option name="LAST_COMMIT_MESSAGE" value="DS - Leduc is running but need to finish eval code. Going to refactor s.t. the main sim function gets passed the agents to evaluate" />
+    <MESSAGE value="DS - Leduc NFSP seems to be 'working' ok. Still need to build the ability to evaluate first best response opponent. Started building a limit bot" />
+    <MESSAGE value="DS - Limit holdem NFSP is running now I need to build out a good way to evaluate its play" />
+    <option name="LAST_COMMIT_MESSAGE" value="DS - Limit holdem NFSP is running now I need to build out a good way to evaluate its play" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -606,8 +590,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Poker/Limit/run.py</url>
-          <line>790</line>
-          <option name="timeStamp" value="88" />
+          <line>518</line>
+          <option name="timeStamp" value="107" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -622,70 +606,53 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>sel</expression-string>
+        <expression-string>F.softmax(action_values[0])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.GameState.current_player</expression-string>
+        <expression-string>F.softmax(action_values)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.GameState</expression-string>
+        <expression-string>action_values</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>'Ks' in 'Kd'</expression-string>
+        <expression-string>action_values[0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>'K' in self.hand_string[self.BB.hand]</expression-string>
+        <expression-string>np.random.uniform(1)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.hand_string[self.BB.hand]</expression-string>
+        <expression-string>self.GameState.num_raises</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.BB.hand</expression-string>
+        <expression-string>self.GameState.game_state.shape</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.SB.name</expression-string>
+        <expression-string>current_state.shape</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.SB.hand</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.SB.hand == self.BB.hand</expression-string>
+        <expression-string>self.BB.stack_size</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Gym/Player.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="27">
-          <caret line="44" column="57" selection-start-line="44" selection-start-column="57" selection-end-line="44" selection-end-column="57" />
-          <folding>
-            <element signature="e#16#26#0" expanded="true" />
-            <element signature="e#364#1093#0" />
-            <element signature="e#1158#1979#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/env/lib/python3.6/site-packages/tensorflow-1.7.1-py3.6-macosx-10.6-intel.egg/tensorflow/contrib/boosted_trees/python/training/functions/gbdt_batch.py" />
     <entry file="file://$PROJECT_DIR$/Udacity/lunar_lander/__init__.py" />
     <entry file="file://$PROJECT_DIR$/env/lib/python3.6/site-packages/gym/envs/box2d/lunar_lander.py" />
@@ -796,16 +763,6 @@
     <entry file="file://$PROJECT_DIR$/Poker/Leduc/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Poker/AKQ/networks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="49" lean-forward="true" selection-start-line="12" selection-start-column="49" selection-end-line="12" selection-end-column="49" />
-          <folding>
-            <element signature="e#16#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Poker/AKQ/agents.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
@@ -864,24 +821,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/virtualenvs/DeepRL/lib/python3.6/codecs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="310" selection-start-line="310" selection-end-line="310" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/virtualenvs/DeepRL/lib/python3.6/site-packages/torch/nn/functional.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3471">
           <caret line="991" selection-start-line="991" selection-end-line="991" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Poker/Limit/networks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>
@@ -892,71 +835,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Poker/Limit/agents.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="113">
-          <caret line="9" column="48" selection-start-line="9" selection-start-column="48" selection-end-line="9" selection-end-column="48" />
-          <folding>
-            <element signature="e#3529#10863#0" />
-            <element signature="e#5247#5964#0" />
-            <element signature="e#6021#6249#0" />
-            <element signature="e#6316#6679#0" />
-            <element signature="e#6748#7485#0" />
-            <element signature="e#7530#8038#0" />
-            <element signature="e#8091#9198#0" />
-            <element signature="e#9249#9558#0" />
-            <element signature="e#9606#10292#0" />
-            <element signature="e#10361#10863#0" />
-            <element signature="e#10890#12739#0" />
-            <element signature="e#12770#14316#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/virtualenvs/DeepRL/lib/python3.6/site-packages/deuces/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
           <caret line="1" selection-start-line="1" selection-end-line="1" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/virtualenvs/DeepRL/lib/python3.6/site-packages/treys/deck.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="8" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Poker/Leduc/networks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1185">
-          <caret line="79" selection-start-line="79" selection-end-line="79" />
-          <folding>
-            <element signature="e#17#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Poker/Limit/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="260" lean-forward="true" selection-start-line="260" selection-end-line="260" />
-          <folding>
-            <element signature="e#31#49#0" expanded="true" />
-            <element signature="e#1310#1385#0" />
-            <element signature="e#1442#2610#0" />
-            <element signature="e#2661#4029#0" />
-            <element signature="e#4070#4552#0" />
-            <element signature="e#4622#5523#0" />
-            <element signature="e#5581#6874#0" />
-            <element signature="e#6930#7462#0" />
-            <element signature="e#7513#7904#0" />
-            <element signature="e#7958#9108#0" />
-            <element signature="e#9151#12412#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -972,25 +854,79 @@
     <entry file="file://$PROJECT_DIR$/Poker/Leduc/data/opponent_bb.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Poker/Leduc/agents.py">
+    <entry file="file://$USER_HOME$/virtualenvs/DeepRL/lib/python3.6/site-packages/treys/card.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="142" column="36" selection-start-line="142" selection-start-column="36" selection-end-line="142" selection-end-column="36" />
+        <state relative-caret-position="90">
+          <caret line="6" column="20" lean-forward="true" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/virtualenvs/DeepRL/lib/python3.6/site-packages/treys/deck.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-111">
+          <caret line="1" column="20" lean-forward="true" selection-start-line="1" selection-start-column="20" selection-end-line="1" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Poker/Limit/networks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1230">
+          <caret line="82" column="11" selection-start-line="82" selection-start-column="11" selection-end-line="82" selection-end-column="11" />
+          <folding>
+            <element signature="e#32#44#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/virtualenvs/DeepRL/lib/python3.6/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="310" selection-start-line="310" selection-end-line="310" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Poker/Limit/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="474" lean-forward="true" selection-start-line="474" selection-end-line="474" />
+          <folding>
+            <element signature="e#31#49#0" expanded="true" />
+            <element signature="e#858#1367#0" />
+            <element signature="e#1332#2566#0" />
+            <element signature="e#1442#2610#0" />
+            <element signature="e#2661#4029#0" />
+            <element signature="e#5581#6874#0" />
+            <element signature="e#6930#7462#0" />
+            <element signature="e#7513#7904#0" />
+            <element signature="e#9059#9435#0" />
+            <element signature="e#7958#8566#0" />
+            <element signature="e#11086#11507#0" />
+            <element signature="e#10713#11211#0" />
+            <element signature="e#12094#13546#0" />
+            <element signature="e#15477#16659#0" />
+            <element signature="e#16039#17262#0" />
+            <marker date="1541801611005" expanded="true" signature="7609:7969" ph="..." />
+            <marker date="1541801611005" expanded="true" signature="8008:8017" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Poker/AKQ/networks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="31" lean-forward="true" selection-start-line="9" selection-start-column="31" selection-end-line="9" selection-end-column="31" />
           <folding>
             <element signature="e#16#28#0" expanded="true" />
-            <element signature="e#609#1213#0" />
-            <element signature="e#1389#1842#0" />
-            <element signature="e#2328#3045#0" />
-            <element signature="e#3703#4395#0" />
-            <element signature="e#4446#4881#0" />
-            <element signature="e#4934#6041#0" />
-            <element signature="e#6092#6401#0" />
-            <element signature="e#6449#7147#0" />
-            <element signature="e#7218#7720#0" />
-            <element signature="e#7747#9596#0" />
-            <element signature="e#9627#11173#0" />
-            <marker date="1541635883339" expanded="false" signature="1284:1287" ph="..." />
-            <marker date="1541635883339" expanded="true" signature="3923:3924" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Poker/Leduc/networks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="26" lean-forward="true" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
+          <folding>
+            <element signature="e#17#29#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -998,10 +934,10 @@
     <entry file="file://$PROJECT_DIR$/Poker/Leduc/hero_bb.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Poker/Leduc/opponent_sb.png">
+    <entry file="file://$PROJECT_DIR$/Poker/Leduc/opponent_bb.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Poker/Leduc/opponent_bb.png">
+    <entry file="file://$PROJECT_DIR$/Poker/Leduc/opponent_sb.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Poker/Leduc/hero_sb.png">
@@ -1009,32 +945,62 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Poker/Leduc/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="1080" lean-forward="true" selection-start-line="1080" selection-end-line="1080" />
+        <state relative-caret-position="396">
+          <caret line="1051" column="19" selection-start-line="1051" selection-start-column="19" selection-end-line="1051" selection-end-column="19" />
           <folding>
             <element signature="e#15#33#0" expanded="true" />
-            <element signature="e#237#10340#0" />
+            <element signature="e#237#10433#0" />
             <element signature="e#2472#5733#0" />
             <element signature="e#5777#6441#0" />
             <element signature="e#6496#6769#0" />
             <element signature="e#6823#8268#0" />
-            <element signature="e#11466#12569#0" />
-            <element signature="e#12620#13988#0" />
-            <element signature="e#14029#14511#0" />
-            <element signature="e#14582#15483#0" />
-            <element signature="e#15541#16834#0" />
-            <element signature="e#16890#17422#0" />
-            <element signature="e#17473#17864#0" />
+            <element signature="e#11559#12662#0" />
+            <element signature="e#12713#14081#0" />
+            <element signature="e#17566#17957#0" />
             <element signature="e#18011#18348#0" />
-            <element signature="e#22417#23081#0" />
-            <element signature="e#23136#23409#0" />
-            <element signature="e#23463#24908#0" />
-            <element signature="e#29149#29923#0" />
-            <marker date="1541636253138" expanded="true" signature="10434:10436" ph="..." />
-            <marker date="1541636253138" expanded="false" signature="11021:11417" ph="..." />
-            <marker date="1541636253138" expanded="true" signature="14113:17516" ph="..." />
-            <marker date="1541636253138" expanded="true" signature="15625:16928" ph="..." />
-            <marker date="1541636253138" expanded="true" signature="18382:18391" ph="..." />
+            <element signature="e#18391#21652#0" />
+            <element signature="e#21696#22360#0" />
+            <element signature="e#22415#22688#0" />
+            <element signature="e#22742#24187#0" />
+            <element signature="e#26072#26764#0" />
+            <element signature="e#26805#27904#0" />
+            <element signature="e#27950#28497#0" />
+            <marker date="1541859172947" expanded="true" signature="10434:10436" ph="..." />
+            <marker date="1541859172947" expanded="false" signature="11021:11417" ph="..." />
+            <marker date="1541859172947" expanded="false" signature="14113:17516" ph="..." />
+            <marker date="1541859172947" expanded="true" signature="15625:16928" ph="..." />
+            <marker date="1541859172947" expanded="true" signature="18383:18392" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Poker/Leduc/agents.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="384" column="8" selection-start-line="384" selection-start-column="8" selection-end-line="384" selection-end-column="8" />
+          <folding>
+            <element signature="e#16#28#0" expanded="true" />
+            <element signature="e#674#1286#0" />
+            <element signature="e#1316#3923#0" />
+            <element signature="e#4101#5629#0" />
+            <element signature="e#6718#7158#0" />
+            <element signature="e#7949#8457#0" />
+            <element signature="e#9668#9977#0" />
+            <element signature="e#10025#10711#0" />
+            <element signature="e#11309#13158#0" />
+            <element signature="e#13188#14734#0" />
+            <marker date="1541856791938" expanded="true" signature="1277:1278" ph="..." />
+            <marker date="1541856791938" expanded="true" signature="3909:3910" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Poker/Limit/agents.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="111" column="26" lean-forward="true" selection-start-line="111" selection-start-column="26" selection-end-line="111" selection-end-column="26" />
+          <folding>
+            <element signature="e#16#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
